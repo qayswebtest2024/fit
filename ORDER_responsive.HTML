@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> طلب عبر الإنترنت</title>
+    <title>مخابز الراية - طلب عبر الإنترنت</title>
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/2Sr4NfTj/465798-png5757.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1043,13 +1043,14 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         
-        /* خريطة تحديد الموقع */
+        /* خريطة تحديد الموقع - محسنة */
         .map-container {
             height: 250px;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 15px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         #location-map {
@@ -1087,6 +1088,30 @@
         .map-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        
+        /* زر تحديد الموقع الحالي */
+        .locate-me-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+        
+        .locate-me-btn:hover {
+            background-color: var(--primary);
+            color: white;
         }
         
         .order-summary {
@@ -1836,6 +1861,9 @@
                         <label>تحديد الموقع على الخريطة (اختياري)</label>
                         <div class="map-container">
                             <div id="location-map"></div>
+                            <button class="locate-me-btn" id="locate-me-btn" title="تحديد موقعي الحالي">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
                         </div>
                         <div class="map-actions">
                             <button type="button" class="map-btn save" id="save-location-btn">حفظ الموقع</button>
@@ -1999,6 +2027,7 @@
         const statusTimeline = document.getElementById('status-timeline');
         const checkoutTabs = document.getElementById('checkout-tabs');
         const tabContents = document.querySelectorAll('.tab-content');
+        const locateMeBtn = document.getElementById('locate-me-btn');
         
         // متغيرات التطبيق
         let allProducts = [];
@@ -2011,6 +2040,8 @@
         let marker = null;
         let lastOrderId = null;
         let currentTab = 'customer-info';
+        let userLocation = null;
+        let locationWatchId = null;
         
         // مناطق عمان
         const ammanAreas = [
@@ -2107,6 +2138,80 @@
                 customerLng.value = '';
                 showToast('تم إعادة تعيين الموقع', 'info');
             });
+            
+            // زر تحديد الموقع الحالي
+            locateMeBtn.addEventListener('click', locateUser);
+        }
+        
+        // تحديد موقع المستخدم الحالي
+        function locateUser() {
+            if (!navigator.geolocation) {
+                showToast('متصفحك لا يدعم خاصية تحديد الموقع', 'error');
+                return;
+            }
+            
+            locateMeBtn.disabled = true;
+            locateMeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            // إيقاف أي عملية تحديد موقع سابقة
+            if (locationWatchId) {
+                navigator.geolocation.clearWatch(locationWatchId);
+            }
+            
+            // طلب الموقع الحالي
+            locationWatchId = navigator.geolocation.watchPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    
+                    // حفظ موقع المستخدم
+                    userLocation = { lat, lng };
+                    
+                    // تحديث الخريطة والعنوان
+                    marker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 16);
+                    customerLat.value = lat;
+                    customerLng.value = lng;
+                    
+                    // إعادة تعيين زر تحديد الموقع
+                    locateMeBtn.disabled = false;
+                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i>';
+                    
+                    // إظهار رسالة نجاح
+                    showToast('تم تحديد موقعك بنجاح', 'success');
+                    
+                    // إيقاف متابعة الموقع بعد الحصول عليه
+                    navigator.geolocation.clearWatch(locationWatchId);
+                    locationWatchId = null;
+                },
+                function(error) {
+                    console.error('خطأ في تحديد الموقع:', error);
+                    
+                    // إعادة تعيين زر تحديد الموقع
+                    locateMeBtn.disabled = false;
+                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i>';
+                    
+                    let errorMessage = 'حدث خطأ في تحديد الموقع';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'تم رفض الإذن للوصول إلى الموقع';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'معلومات الموقع غير متاحة';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'انتهت مهلة طلب الموقع';
+                            break;
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
         }
         
         // جلب المنتجات من Google Sheets
@@ -2115,33 +2220,31 @@
             
             loadingElement.style.display = 'block';
             
+            // استخدام تقنية التخزين المؤقت للمنتجات
+            const cachedProducts = localStorage.getItem('cachedProducts');
+            const cacheTimestamp = localStorage.getItem('cacheTimestamp');
+            const now = Date.now();
+            
+            // إذا كانت البيانات مخزنة ومضى أقل من 5 دقائق على تخزينها
+            if (cachedProducts && cacheTimestamp && (now - cacheTimestamp < 5 * 60 * 1000)) {
+                try {
+                    const data = JSON.parse(cachedProducts);
+                    processProductsData(data);
+                    loadingElement.style.display = 'none';
+                    return;
+                } catch (e) {
+                    console.error('Error parsing cached products:', e);
+                }
+            }
+            
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    // معالجة البيانات فقط إذا كانت متاحة
-                    if (data && data.length > 0) {
-                        allProducts = normalizeProducts(data);
-                        
-                        // استخراج المجموعات الفريدة من المنتجات
-                        extractUniqueCategories();
-                        
-                        // إنشاء أزرار التصنيفات
-                        createCategoryButtons();
-                    } else {
-                        // عرض رسالة عدم وجود منتجات
-                        loadingElement.innerHTML = `
-                            <div class="no-results">
-                                <i class="fas fa-exclamation-circle"></i>
-                                <p>لا توجد منتجات متاحة حالياً</p>
-                            </div>
-                        `;
-                    }
+                    // تخزين البيانات مؤقتاً
+                    localStorage.setItem('cachedProducts', JSON.stringify(data));
+                    localStorage.setItem('cacheTimestamp', now.toString());
                     
-                    // إخفاء رسالة التحميل
-                    loadingElement.style.display = 'none';
-                    
-                    // عرض المنتجات
-                    displayProducts(allProducts);
+                    processProductsData(data);
                 })
                 .catch(error => {
                     console.error('حدث خطأ في جلب البيانات:', error);
@@ -2154,6 +2257,34 @@
                         </div>
                     `;
                 });
+        }
+        
+        // معالجة بيانات المنتجات
+        function processProductsData(data) {
+            // معالجة البيانات فقط إذا كانت متاحة
+            if (data && data.length > 0) {
+                allProducts = normalizeProducts(data);
+                
+                // استخراج المجموعات الفريدة من المنتجات
+                extractUniqueCategories();
+                
+                // إنشاء أزرار التصنيفات
+                createCategoryButtons();
+            } else {
+                // عرض رسالة عدم وجود منتجات
+                loadingElement.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>لا توجد منتجات متاحة حالياً</p>
+                    </div>
+                `;
+            }
+            
+            // إخفاء رسالة التحميل
+            loadingElement.style.display = 'none';
+            
+            // عرض المنتجات
+            displayProducts(allProducts);
         }
         
         // تطبيع بيانات المنتجات
@@ -2174,7 +2305,7 @@
                 if (product.images && typeof product.images === 'string') {
                     product.images = product.images.split(',').map(url => url.trim());
                 } else if (!product.images) {
-                    product.images = [product.image];
+                    product.images = [product.image || 'https://via.placeholder.com/300x200?text=صورة+غير+متاحة'];
                 }
                 
                 // تقسيم المكونات إذا كانت سلسلة نصية
@@ -3082,13 +3213,21 @@
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             const img = entry.target;
+                            img.src = img.src; // إعادة تحميل الصورة
                             img.classList.add('loaded');
                             imageObserver.unobserve(img);
                         }
                     });
+                }, {
+                    rootMargin: '0px 0px 100px 0px' // تحميل الصور قبل 100px من ظهورها
                 });
                 
                 lazyImages.forEach(img => {
+                    // تعيين صورة placeholder صغيرة الحجم أولاً
+                    if (img.getAttribute('data-src')) {
+                        img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+                        img.setAttribute('data-src', img.src);
+                    }
                     imageObserver.observe(img);
                 });
             } else {
