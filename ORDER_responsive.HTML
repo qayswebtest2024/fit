@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/2Sr4NfTj/465798-png5757.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --primary: #9c0f33;
@@ -729,7 +730,6 @@
         
         .product-note-container {
             margin: 20px 0;
-            display: none; /* مخفي افتراضيًا */
         }
         
         .product-note-label {
@@ -1036,8 +1036,6 @@
         .tab-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
         }
         
         .tab-btn:hover:not(:disabled) {
@@ -1047,7 +1045,7 @@
         
         /* خريطة تحديد الموقع - محسنة */
         .map-container {
-            height: 300px;
+            height: 250px;
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 15px;
@@ -1058,17 +1056,13 @@
         #location-map {
             height: 100%;
             width: 100%;
-            border-radius: 10px;
         }
         
-        .map-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
+        .map-actions {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 15px;
         }
         
         .map-btn {
@@ -1079,64 +1073,45 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.9rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .map-btn.locate {
-            background-color: var(--primary);
-            color: white;
         }
         
         .map-btn.save {
-            background-color: var(--success);
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
             color: white;
         }
         
         .map-btn.cancel {
-            background-color: var(--danger);
-            color: white;
+            background-color: var(--gray);
+            color: var(--dark);
         }
         
         .map-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         
-        .map-actions {
+        /* زر تحديد الموقع الحالي */
+        .locate-me-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+            background-color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-            margin-bottom: 15px;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: var(--transition);
         }
         
-        .location-status {
-            text-align: center;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            display: none;
-        }
-        
-        .location-status.success {
-            background-color: rgba(92, 184, 92, 0.2);
-            color: var(--success);
-            display: block;
-        }
-        
-        .location-status.error {
-            background-color: rgba(217, 83, 79, 0.2);
-            color: var(--danger);
-            display: block;
-        }
-        
-        .location-status.info {
-            background-color: rgba(91, 192, 222, 0.2);
-            color: var(--info);
-            display: block;
+        .locate-me-btn:hover {
+            background-color: var(--primary);
+            color: white;
         }
         
         .order-summary {
@@ -1886,13 +1861,10 @@
                         <label>تحديد الموقع على الخريطة (اختياري)</label>
                         <div class="map-container">
                             <div id="location-map"></div>
-                            <div class="map-overlay">
-                                <button class="map-btn locate" id="locate-me-btn" title="تحديد موقعي الحالي">
-                                    <i class="fas fa-location-arrow"></i> موقعي الحالي
-                                </button>
-                            </div>
+                            <button class="locate-me-btn" id="locate-me-btn" title="تحديد موقعي الحالي">
+                                <i class="fas fa-location-arrow"></i>
+                            </button>
                         </div>
-                        <div class="location-status" id="location-status"></div>
                         <div class="map-actions">
                             <button type="button" class="map-btn save" id="save-location-btn">حفظ الموقع</button>
                             <button type="button" class="map-btn cancel" id="reset-location-btn">إعادة تعيين</button>
@@ -1997,8 +1969,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
-    <!-- إضافة خرائط جوجل -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap&libraries=places&language=ar&region=JO"></script>
+    <!-- إضافة Leaflet للخرائط -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
         // تهيئة Firebase
@@ -2056,7 +2028,6 @@
         const checkoutTabs = document.getElementById('checkout-tabs');
         const tabContents = document.querySelectorAll('.tab-content');
         const locateMeBtn = document.getElementById('locate-me-btn');
-        const locationStatus = document.getElementById('location-status');
         
         // متغيرات التطبيق
         let allProducts = [];
@@ -2071,7 +2042,6 @@
         let currentTab = 'customer-info';
         let userLocation = null;
         let locationWatchId = null;
-        let geocoder = null;
         
         // مناطق عمان
         const ammanAreas = [
@@ -2105,6 +2075,9 @@
             // تحميل الصور بكسلولة
             initLazyLoading();
             
+            // تهيئة الخريطة
+            initMap();
+            
             // التحقق من وجود رقم طلب آخر
             checkLastOrderId();
         }
@@ -2117,114 +2090,68 @@
             }
         }
         
-        // تهيئة الخريطة (سيتم استدعاؤها من قبل خرائط جوجل)
+        // تهيئة الخريطة
         function initMap() {
             // إحداثيات عمان الافتراضية
             const defaultLat = 31.9539;
             const defaultLng = 35.9106;
             
             // تهيئة الخريطة
-            map = new google.maps.Map(document.getElementById('location-map'), {
-                center: { lat: defaultLat, lng: defaultLng },
-                zoom: 13,
-                mapTypeControl: true,
-                streetViewControl: false,
-                fullscreenControl: true,
-                zoomControl: true,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            });
+            map = L.map('location-map').setView([defaultLat, defaultLng], 13);
             
-            // تهيئة Geocoder لتحويل الإحداثيات إلى عناوين
-            geocoder = new google.maps.Geocoder();
+            // إضافة طبقة الخريطة
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
             
             // إضافة علامة قابلة للسحب
-            marker = new google.maps.Marker({
-                position: { lat: defaultLat, lng: defaultLng },
-                map: map,
-                draggable: true,
-                title: 'موقع التوصيل'
-            });
+            marker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map);
             
             // تحديث الإحداثيات عند سحب العلامة
-            marker.addListener('dragend', function() {
-                const position = marker.getPosition();
-                customerLat.value = position.lat();
-                customerLng.value = position.lng();
-                
-                // الحصول على العنوان من الإحداثيات
-                reverseGeocode(position.lat(), position.lng());
+            marker.on('dragend', function(event) {
+                const position = marker.getLatLng();
+                customerLat.value = position.lat;
+                customerLng.value = position.lng;
             });
             
-            // تحديث الإحداثيات عند النقر على الخريطة
-            map.addListener('click', function(e) {
-                marker.setPosition(e.latLng);
-                customerLat.value = e.latLng.lat();
-                customerLng.value = e.latLng.lng();
-                
-                // الحصول على العنوان من الإحداثيات
-                reverseGeocode(e.latLng.lat(), e.latLng.lng());
+            // تحديث الإحداثيات عند النقر на الخريطة
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                customerLat.value = e.latlng.lat;
+                customerLng.value = e.latlng.lng;
             });
             
             // زر حفظ الموقع
             saveLocationBtn.addEventListener('click', function() {
                 if (customerLat.value && customerLng.value) {
                     showToast('تم حفظ الموقع بنجاح', 'success');
-                    locationStatus.textContent = 'تم حفظ موقعك بنجاح';
-                    locationStatus.className = 'location-status success';
                 } else {
                     showToast('يرجى تحديد موقع على الخريطة', 'error');
-                    locationStatus.textContent = 'يرجى تحديد موقع على الخريطة أولاً';
-                    locationStatus.className = 'location-status error';
                 }
             });
             
             // زر إعادة تعيين
             resetLocationBtn.addEventListener('click', function() {
-                marker.setPosition({ lat: defaultLat, lng: defaultLng });
-                map.setCenter({ lat: defaultLat, lng: defaultLng });
+                marker.setLatLng([defaultLat, defaultLng]);
+                map.setView([defaultLat, defaultLng], 13);
                 customerLat.value = '';
                 customerLng.value = '';
-                document.getElementById('customer-address').value = '';
                 showToast('تم إعادة تعيين الموقع', 'info');
-                locationStatus.textContent = 'تم إعادة تعيين الخريطة إلى الموقع الافتراضي';
-                locationStatus.className = 'location-status info';
             });
             
             // زر تحديد الموقع الحالي
             locateMeBtn.addEventListener('click', locateUser);
         }
         
-        // تحويل الإحداثيات إلى عنوان
-        function reverseGeocode(lat, lng) {
-            const latLng = { lat: parseFloat(lat), lng: parseFloat(lng) };
-            
-            geocoder.geocode({ 'location': latLng }, function(results, status) {
-                if (status === 'OK') {
-                    if (results[0]) {
-                        // تحديث حقل العنوان تلقائيًا
-                        document.getElementById('customer-address').value = results[0].formatted_address;
-                    } else {
-                        console.log('لم يتم العثور على نتائج');
-                    }
-                } else {
-                    console.log('فشل في الحصول على العنوان: ' + status);
-                }
-            });
-        }
-        
         // تحديد موقع المستخدم الحالي
         function locateUser() {
             if (!navigator.geolocation) {
                 showToast('متصفحك لا يدعم خاصية تحديد الموقع', 'error');
-                locationStatus.textContent = 'متصفحك لا يدعم خاصية تحديد الموقع';
-                locationStatus.className = 'location-status error';
                 return;
             }
             
             locateMeBtn.disabled = true;
-            locateMeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تحديد الموقع...';
-            locationStatus.textContent = 'جاري تحديد موقعك الحالي...';
-            locationStatus.className = 'location-status info';
+            locateMeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             
             // إيقاف أي عملية تحديد موقع سابقة
             if (locationWatchId) {
@@ -2241,24 +2168,17 @@
                     userLocation = { lat, lng };
                     
                     // تحديث الخريطة والعنوان
-                    const newPosition = new google.maps.LatLng(lat, lng);
-                    marker.setPosition(newPosition);
-                    map.setCenter(newPosition);
-                    map.setZoom(16);
+                    marker.setLatLng([lat, lng]);
+                    map.setView([lat, lng], 16);
                     customerLat.value = lat;
                     customerLng.value = lng;
                     
-                    // الحصول على العنوان من الإحداثيات
-                    reverseGeocode(lat, lng);
-                    
                     // إعادة تعيين زر تحديد الموقع
                     locateMeBtn.disabled = false;
-                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i> موقعي الحالي';
+                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i>';
                     
                     // إظهار رسالة نجاح
                     showToast('تم تحديد موقعك بنجاح', 'success');
-                    locationStatus.textContent = 'تم تحديد موقعك بنجاح';
-                    locationStatus.className = 'location-status success';
                     
                     // إيقاف متابعة الموقع بعد الحصول عليه
                     navigator.geolocation.clearWatch(locationWatchId);
@@ -2269,12 +2189,12 @@
                     
                     // إعادة تعيين زر تحديد الموقع
                     locateMeBtn.disabled = false;
-                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i> موقعي الحالي';
+                    locateMeBtn.innerHTML = '<i class="fas fa-location-arrow"></i>';
                     
                     let errorMessage = 'حدث خطأ في تحديد الموقع';
                     switch(error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = 'تم رفض الإذن للوصول إلى الموقع. يرجى السماح بالوصول إلى الموقع في إعدادات المتصفح';
+                            errorMessage = 'تم رفض الإذن للوصول إلى الموقع';
                             break;
                         case error.POSITION_UNAVAILABLE:
                             errorMessage = 'معلومات الموقع غير متاحة';
@@ -2285,8 +2205,6 @@
                     }
                     
                     showToast(errorMessage, 'error');
-                    locationStatus.textContent = errorMessage;
-                    locationStatus.className = 'location-status error';
                 },
                 {
                     enableHighAccuracy: true,
