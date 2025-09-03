@@ -7,7 +7,6 @@
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/2Sr4NfTj/465798-png5757.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --primary: #9c0f33;
@@ -551,7 +550,7 @@
             font-size: 1.1rem;
         }
         
-        /* قسم المنتجات المقترحة في السلة */
+        /* قسم المنتجات المقترحة في السلة - تم التعديل */
         .suggested-products {
             padding: 20px;
             border-top: 1px solid var(--gray);
@@ -580,10 +579,31 @@
             border-radius: 2px;
         }
         
+        .suggested-scroll-container {
+            overflow-x: auto;
+            padding: 10px 5px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        
+        .suggested-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .suggested-scroll-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 3px;
+        }
+        
+        .suggested-scroll-container::-webkit-scrollbar-track {
+            background-color: var(--light);
+            border-radius: 3px;
+        }
+        
         .suggested-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            display: flex;
             gap: 15px;
+            padding: 5px;
         }
         
         .suggested-item {
@@ -593,6 +613,9 @@
             box-shadow: 0 3px 8px rgba(0,0,0,0.08);
             transition: var(--transition);
             cursor: pointer;
+            flex: 0 0 auto;
+            width: 150px;
+            position: relative;
         }
         
         .suggested-item:hover {
@@ -630,6 +653,28 @@
             color: var(--primary);
             font-size: 0.9rem;
             text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .suggested-add-btn {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .suggested-add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(156, 15, 51, 0.3);
         }
         
         /* نافذة تفاصيل المنتج المحسنة */
@@ -1129,7 +1174,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         
-        /* خريطة تحديد الموقع - محسنة */
+        /* خريطة تحديد الموقع - محسنة باستخدام Google Maps */
         .map-container {
             height: 250px;
             border-radius: 10px;
@@ -1524,6 +1569,7 @@
             font-size: 2rem;
             color: var(--primary);
             margin-bottom: 15px;
+            direction: rtl;
         }
         
         .thank-you-message {
@@ -1531,6 +1577,7 @@
             color: var(--dark);
             margin-bottom: 30px;
             line-height: 1.7;
+            direction: rtl;
         }
         
         .thank-you-btn {
@@ -1828,8 +1875,8 @@
                 justify-content: center;
             }
             
-            .suggested-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .suggested-item {
+                width: 130px;
             }
         }
     </style>
@@ -1893,11 +1940,13 @@
                 <!-- سيتم ملء هذا القسم بالمنتجات المضافة -->
             </div>
             
-            <!-- قسم المنتجات المقترحة -->
+            <!-- قسم المنتجات المقترحة - تم التعديل -->
             <div class="suggested-products" id="suggested-products">
                 <h3 class="suggested-title">منتجات قد تعجبك</h3>
-                <div class="suggested-grid" id="suggested-grid">
-                    <!-- سيتم ملء هذا القسم بالمنتجات المقترحة -->
+                <div class="suggested-scroll-container">
+                    <div class="suggested-grid" id="suggested-grid">
+                        <!-- سيتم ملء هذا القسم بالمنتجات المقترحة -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -1980,10 +2029,10 @@
                             <option value="شارع الجامعة">شارع الجامعة</option>
                             <option value="دوار الواحة">دوار الواحة</option>
                             <option value="حدائق الحسين">حدائق الحسين</option>
-                            <option value="ضاحية الرشيد">ضاحية الرشيد</option>
+                            <option value="ضاحية الرشيد"> ضاحية الرشيد</option>
                             <option value="ضاحية الروضة">ضاحية الروضة</option>
                             <option value="الجبيهة">الجبيهة</option>
-                            <option value="الجاردنز">الجاردنズ</option>
+                            <option value="الجاردنز">الجاردنز</option>
                             <option value="صافوط">صافوط</option>
                             <option value="الرابية">الرابية</option>
                             <option value="الدوار السابع">الدوار السابع</option>
@@ -2023,7 +2072,7 @@
                             <option value="الهاشمي الشمالي">الهاشمي الشمالي</option>
                             <option value="جبل النزهة">جبل النزهة</option>
                             <option value="ابوعليا">ابوعليا</option>
-                            <option value="طبربور">طبربور</option>
+                            <option value="طبرbور">طبربور</option>
                             <option value="ضاحية الاميرحسن">ضاحية الاميرحسن</option>
                             <option value="جبل النصر">جبل النصر</option>
                             <option value="عدن">عدن</option>
@@ -2166,9 +2215,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
-    <!-- إضافة Leaflet للخرائط -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <!-- إضافة خرائط Google -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpEmhS2X474vMWRfL5U2WwqJjK-7W5YyY&libraries=places&callback=Function.prototype" async defer></script>
     
@@ -2260,7 +2306,7 @@
             "دوار الواحة": 2.50,
             "حدائق الحسين": 2.50,
             "ضاحية الرشيد": 3.00,
-            "ضاحية الروضة": 3.00,
+            " ضاحية الروضة": 3.00,
             "الجبيهة": 3.00,
             "الجاردنز": 3.00,
             "صافوط": 3.00,
@@ -2282,7 +2328,7 @@
             "الفحيص": 4.00,
             "ماحص": 4.00,
             "الدوار الثالث": 4.00,
-            "وادي صقرة": 4.00,
+            "وadi صقرة": 4.00,
             "العبدلي": 4.00,
             "عبدون": 4.00,
             "دير غبار": 4.00,
@@ -2375,43 +2421,79 @@
             const defaultLng = 35.9106;
             
             // تهيئة الخريطة
-            map = L.map('location-map', {
-                zoomControl: false,
-                preferCanvas: true // تحسين الأداء
-            }).setView([defaultLat, defaultLng], 13);
-            
-            // إضافة عناصر التحكم في التكبير/التصغير
-            L.control.zoom({
-                position: 'topright'
-            }).addTo(map);
-            
-            // إضافة طبقة الخريطة مع تحسين الأداء
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                maxZoom: 18,
-                minZoom: 10
-            }).addTo(map);
+            map = new google.maps.Map(document.getElementById('location-map'), {
+                center: { lat: defaultLat, lng: defaultLng },
+                zoom: 13,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+                mapTypeControl: false,
+                fullscreenControl: false,
+                styles: [
+                    {
+                        "featureType": "administrative",
+                        "elementType": "labels.text.fill",
+                        "stylers": [{"color": "#444444"}]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "all",
+                        "stylers": [{"color": "#f2f2f2"}]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "all",
+                        "stylers": [{"visibility": "off"}]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "all",
+                        "stylers": [{"saturation": -100}, {"lightness": 45}]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "all",
+                        "stylers": [{"visibility": "simplified"}]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.icon",
+                        "stylers": [{"visibility": "off"}]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "all",
+                        "stylers": [{"visibility": "off"}]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "all",
+                        "stylers": [{"color": "#9c0f33"}, {"visibility": "on"}]
+                    }
+                ]
+            });
             
             // إضافة علامة قابلة للسحب
-            marker = L.marker([defaultLat, defaultLng], {
+            marker = new google.maps.Marker({
+                position: { lat: defaultLat, lng: defaultLng },
+                map: map,
                 draggable: true,
-                autoPan: true // تحريك الخريطة تلقائياً عند سحب العلامة
-            }).addTo(map);
+                title: 'موقع التوصيل'
+            });
             
             // تحديث الإحداثيات عند سحب العلامة
-            marker.on('dragend', function(event) {
-                const position = marker.getLatLng();
-                customerLat.value = position.lat;
-                customerLng.value = position.lng;
+            marker.addListener('dragend', function() {
+                const position = marker.getPosition();
+                customerLat.value = position.lat();
+                customerLng.value = position.lng();
                 map.panTo(position); // تحريك الخريطة إلى العلامة
             });
             
             // تحديث الإحداثيات عند النقر على الخريطة
-            map.on('click', function(e) {
-                marker.setLatLng(e.latlng);
-                customerLat.value = e.latlng.lat;
-                customerLng.value = e.latlng.lng;
-                map.panTo(e.latlng); // تحريك الخريطة إلى النقطة المحددة
+            map.addListener('click', function(e) {
+                marker.setPosition(e.latLng);
+                customerLat.value = e.latLng.lat();
+                customerLng.value = e.latLng.lng();
+                map.panTo(e.latLng); // تحريك الخريطة إلى النقطة المحددة
             });
             
             // زر حفظ الموقع
@@ -2425,8 +2507,9 @@
             
             // زر إعادة تعيين
             resetLocationBtn.addEventListener('click', function() {
-                marker.setLatLng([defaultLat, defaultLng]);
-                map.setView([defaultLat, defaultLng], 13);
+                const defaultPosition = new google.maps.LatLng(defaultLat, defaultLng);
+                marker.setPosition(defaultPosition);
+                map.setCenter(defaultPosition);
                 customerLat.value = '';
                 customerLng.value = '';
                 showToast('تم إعادة تعيين الموقع', 'info');
@@ -2461,8 +2544,10 @@
                     userLocation = { lat, lng };
                     
                     // تحديث الخريطة والعنوان
-                    marker.setLatLng([lat, lng]);
-                    map.setView([lat, lng], 16);
+                    const newPosition = new google.maps.LatLng(lat, lng);
+                    marker.setPosition(newPosition);
+                    map.setCenter(newPosition);
+                    map.setZoom(16);
                     customerLat.value = lat;
                     customerLng.value = lng;
                     
@@ -3249,10 +3334,10 @@
             // إذا لم يكن هناك منتجات، لا نعرض أي شيء
             if (allProducts.length === 0) return;
             
-            // اختيار 4 منتجات عشوائية (أو أقل إذا لم يكن هناك منتجات كافية)
+            // اختيار 6 منتجات عشوائية (أو أقل إذا لم يكن هناك منتجات كافية)
             const randomProducts = [...allProducts]
                 .sort(() => 0.5 - Math.random())
-                .slice(0, 4);
+                .slice(0, 6);
             
             // إضافة المنتجات إلى القسم
             randomProducts.forEach(product => {
@@ -3260,17 +3345,27 @@
                 suggestedItem.className = 'suggested-item';
                 suggestedItem.innerHTML = `
                     <div class="suggested-image">
-                        <img src="${product.images[0]}" alt="${product.name}">
+                        <img src="${product.images[0]}" alt="${product.name}" loading="lazy">
                     </div>
                     <div class="suggested-details">
                         <div class="suggested-name">${product.name}</div>
                         <div class="suggested-price">${product.price.toFixed(2)} د.أ</div>
+                        <button class="suggested-add-btn" data-id="${product.id}">
+                            <i class="fas fa-cart-plus"></i> إضافة
+                        </button>
                     </div>
                 `;
                 
                 // إضافة حدث النقر لإضافة المنتج إلى السلة
-                suggestedItem.addEventListener('click', () => {
+                const addButton = suggestedItem.querySelector('.suggested-add-btn');
+                addButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     addToCart(product);
+                });
+                
+                // إضافة حدث النقر لعرض تفاصيل المنتج
+                suggestedItem.addEventListener('click', () => {
+                    showProductDetails(product);
                 });
                 
                 suggestedGrid.appendChild(suggestedItem);
