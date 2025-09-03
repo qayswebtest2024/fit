@@ -36,7 +36,6 @@
             color: var(--dark);
             min-height: 100vh;
             position: relative;
-            padding-bottom: 70px;
         }
         
         /* تصميم الهيدر المعدل */
@@ -100,41 +99,40 @@
             gap: 5px;
         }
         
-        /* زر السلة العائم الجديد */
+        /* زر السلة الجديد - مشابه لطلبات */
         .floating-cart {
             position: fixed;
             bottom: 30px;
-            left: 30px;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: 99;
             background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+            padding: 12px 25px;
+            border-radius: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 5px 20px rgba(156, 15, 51, 0.4);
             transition: var(--transition);
+            min-width: 200px;
+            gap: 10px;
         }
         
         .floating-cart:hover {
-            transform: scale(1.1) translateY(-5px);
+            transform: translateX(-50%) translateY(-5px);
             box-shadow: 0 8px 25px rgba(156, 15, 51, 0.5);
         }
         
         .floating-cart .cart-count {
-            position: absolute;
-            top: 0;
-            left: 0;
             background-color: var(--warning);
             color: white;
             border-radius: 50%;
             width: 25px;
             height: 25px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -183,7 +181,7 @@
         
         /* منطقة عرض المنتجات المحسنة */
         .products-container {
-            padding: 15px 15px 80px 15px;
+            padding: 15px 15px 100px 15px;
         }
         
         .section-title {
@@ -375,6 +373,13 @@
             cursor: pointer;
         }
         
+        .cart-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
         .cart-items {
             flex: 1;
             overflow-y: auto;
@@ -544,6 +549,87 @@
         
         .empty-cart p {
             font-size: 1.1rem;
+        }
+        
+        /* قسم المنتجات المقترحة في السلة */
+        .suggested-products {
+            padding: 20px;
+            border-top: 1px solid var(--gray);
+            background-color: #fffaf3;
+        }
+        
+        .suggested-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .suggested-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            border-radius: 2px;
+        }
+        
+        .suggested-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .suggested-item {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .suggested-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .suggested-image {
+            height: 100px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .suggested-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .suggested-details {
+            padding: 10px;
+        }
+        
+        .suggested-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .suggested-price {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 0.9rem;
+            text-align: center;
         }
         
         /* نافذة تفاصيل المنتج المحسنة */
@@ -1161,6 +1247,35 @@
             border-top: 2px solid var(--gray);
         }
         
+        .order-delivery {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: var(--primary);
+            font-weight: bold;
+            display: none; /* إخفاء سعر التوصيل */
+        }
+        
+        .order-discount {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: var(--success);
+            font-weight: bold;
+            display: none; /* إخفاء الخصم */
+        }
+        
+        .order-final-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            padding-top: 12px;
+            border-top: 2px solid var(--gray);
+            color: var(--primary);
+        }
+        
         .submit-order-btn {
             background: linear-gradient(to right, var(--primary), var(--primary-dark));
             color: white;
@@ -1640,10 +1755,12 @@
             
             .floating-cart {
                 bottom: 20px;
-                left: 20px;
-                width: 60px;
-                height: 60px;
-                font-size: 1.3rem;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
+                height: auto;
+                font-size: 1rem;
+                padding: 10px 20px;
             }
             
             .sticky-categories {
@@ -1710,6 +1827,10 @@
                 width: 100%;
                 justify-content: center;
             }
+            
+            .suggested-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
@@ -1738,10 +1859,11 @@
         </div>
     </div>
     
-    <!-- زر السلة العائم -->
+    <!-- زر السلة الجديد -->
     <div class="floating-cart" id="floating-cart">
-        <i class="fas fa-shopping-cart"></i>
         <span class="cart-count" id="floating-cart-count">0</span>
+        <span>عرض السلة</span>
+        <i class="fas fa-shopping-cart"></i>
     </div>
     
     <!-- منطقة عرض المنتجات -->
@@ -1766,8 +1888,18 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="cart-items" id="cart-items">
-            <!-- سيتم ملء هذا القسم بالمنتجات المضافة -->
+        <div class="cart-content">
+            <div class="cart-items" id="cart-items">
+                <!-- سيتم ملء هذا القسم بالمنتجات المضافة -->
+            </div>
+            
+            <!-- قسم المنتجات المقترحة -->
+            <div class="suggested-products" id="suggested-products">
+                <h3 class="suggested-title">منتجات قد تعجبك</h3>
+                <div class="suggested-grid" id="suggested-grid">
+                    <!-- سيتم ملء هذا القسم بالمنتجات المقترحة -->
+                </div>
+            </div>
         </div>
         <div class="cart-footer">
             <div class="cart-total">
@@ -1838,23 +1970,84 @@
                         <label for="customer-area">المنطقة *</label>
                         <select id="customer-area" required>
                             <option value="">اختر المنطقة</option>
-                            <option value="خلدا">خلدا</option>
                             <option value="صويلح">صويلح</option>
                             <option value="دابوق">دابوق</option>
-                            <option value="الشميساني">الشميساني</option>
-                            <option value="جبل عمان">جبل عمان</option>
-                            <option value="الصويفية">الصويفية</option>
-                            <option value="الزرقاء">الزرقاء</option>
-                            <option value="الرابية">الرابية</option>
+                            <option value="خلدا">خلدا</option>
                             <option value="تلاع العلي">تلاع العلي</option>
+                            <option value="ام السماق">ام السماق</option>
+                            <option value="الكمالية">الكمالية</option>
+                            <option value="المدينة الطبية">المدينة الطبية</option>
+                            <option value="شارع الجامعة">شارع الجامعة</option>
+                            <option value="دوار الواحة">دوار الواحة</option>
+                            <option value="حدائق الحسين">حدائق الحسين</option>
+                            <option value="ضاحية الرشيد">ضاحية الرشيد</option>
+                            <option value="ضاحية الروضة">ضاحية الروضة</option>
+                            <option value="الجبيهة">الجبيهة</option>
+                            <option value="الجاردنز">الجاردنズ</option>
+                            <option value="صافوط">صافوط</option>
+                            <option value="الرابية">الرابية</option>
+                            <option value="الدوار السابع">الدوار السابع</option>
+                            <option value="الدوار الثامن">الدوار الثامن</option>
+                            <option value="البيادر">البيادر</option>
+                            <option value="الجندويل">الجندويل</option>
+                            <option value="الكرسي">الكرسي</option>
+                            <option value="الشميساني">الشميساني</option>
+                            <option value="الامير راشد">الامير راشد</option>
+                            <option value="بدر الجديدة">بدر الجديدة</option>
+                            <option value="الدوار الرابع">الدوار الرابع</option>
+                            <option value="الدوار الخامس">الدوار الخامس</option>
+                            <option value="الدوار السادس">الدوار السادس</option>
+                            <option value="حي المنصور">حي المنصور</option>
+                            <option value="الصويفية">الصويفية</option>
+                            <option value="ام اذينة">ام اذينة</option>
+                            <option value="الفحيص">الفحيص</option>
+                            <option value="ماحص">ماحص</option>
+                            <option value="الدوار الثالث">الدوار الثالث</option>
+                            <option value="وادي صقرة">وادي صقرة</option>
+                            <option value="العبدلي">العبدلي</option>
+                            <option value="عبدون">عبدون</option>
+                            <option value="دير غبار">دير غبار</option>
+                            <option value="شفا بدران">شفا بدران</option>
+                            <option value="ابو نصير">ابو نصير</option>
+                            <option value="ضاحية النخيل">ضاحية النخيل</option>
+                            <option value="الظهير">الظهير</option>
+                            <option value="عين الباشا">عين الباشا</option>
+                            <option value="عرجان">عرجان</option>
+                            <option value="المدينة الرياضية">المدينة الرياضية</option>
                             <option value="مرج الحمام">مرج الحمام</option>
-                            <option value="أخرى">أخرى</option>
+                            <option value="الدوار الثاني">الدوار الثاني</option>
+                            <option value="الدوار الاول">الدوار الاول</option>
+                            <option value="جبل الحسين">جبل الحسين</option>
+                            <option value="ضاحية الاقصى">ضاحية الاقصى</option>
+                            <option value="ضاحية الياسمين">ضاحية الياسمين</option>
+                            <option value="الهاشمي الشمالي">الهاشمي الشمالي</option>
+                            <option value="جبل النزهة">جبل النزهة</option>
+                            <option value="ابوعليا">ابوعليا</option>
+                            <option value="طبربور">طبربور</option>
+                            <option value="ضاحية الاميرحسن">ضاحية الاميرحسن</option>
+                            <option value="جبل النصر">جبل النصر</option>
+                            <option value="عدن">عدن</option>
+                            <option value="حي نزال">حي نزال</option>
+                            <option value="جبل الأخضر">جبل الأخضر</option>
+                            <option value="المقابلين">المقابلين</option>
+                            <option value="جبل الزهور">جبل الزهور</option>
+                            <option value="البنيات">البنيات</option>
+                            <option value="عراق الأمير">عراق الأمير</option>
+                            <option value="ضاحية الحاج حسن">ضاحية الحاج حسن</option>
+                            <option value="شارع الحرية">شارع الحرية</option>
+                            <option value="المنارة">المنارة</option>
+                            <option value="ام النواره">ام النواره</option>
+                            <option value="الوحدات">الوحدات</option>
+                            <option value="أبو علندا">أبو علندا</option>
+                            <option value="جاوا">جاوا</option>
+                            <option value="الجويدة">الجويدة</option>
+                            <option value="خريبة السوق">خريبة السوق</option>
+                            <option value="ماركا الشمالية">ماركا الشمالية</option>
+                            <option value="ماركا الجنوبية">ماركا الجنوبية</option>
+                            <option value="القويسمة">القويسمة</option>
+                            <option value="جبل الشمالي">جبل الشمالي</option>
+                            <option value="الرصيفة">الرصيفة</option>
                         </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="customer-address">العنوان التفصيلي *</label>
-                        <textarea id="customer-address" required></textarea>
                     </div>
                     
                     <div class="form-group">
@@ -1898,6 +2091,10 @@
                         <div class="order-total">
                             <span>الإجمالي:</span>
                             <span id="order-total-price">0.00 د.أ</span>
+                        </div>
+                        <div class="order-final-total">
+                            <span>المجموع النهائي:</span>
+                            <span id="order-final-price">0.00 د.أ</span>
                         </div>
                     </div>
                     
@@ -1972,6 +2169,9 @@
     <!-- إضافة Leaflet للخرائط -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
+    <!-- إضافة خرائط Google -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpEmhS2X474vMWRfL5U2WwqJjK-7W5YyY&libraries=places&callback=Function.prototype" async defer></script>
+    
     <script>
         // تهيئة Firebase
         const firebaseConfig = {
@@ -2007,6 +2207,9 @@
         const checkoutForm = document.getElementById('checkout-form');
         const orderItems = document.getElementById('order-items');
         const orderTotalPrice = document.getElementById('order-total-price');
+        const orderDeliveryPrice = document.getElementById('order-delivery-price');
+        const orderDiscountAmount = document.getElementById('order-discount-amount');
+        const orderFinalPrice = document.getElementById('order-final-price');
         const submitOrderBtn = document.getElementById('submit-order-btn');
         const toastContainer = document.getElementById('toast-container');
         const thankYouScreen = document.getElementById('thank-you-screen');
@@ -2028,6 +2231,9 @@
         const checkoutTabs = document.getElementById('checkout-tabs');
         const tabContents = document.querySelectorAll('.tab-content');
         const locateMeBtn = document.getElementById('locate-me-btn');
+        const customerArea = document.getElementById('customer-area');
+        const suggestedProducts = document.getElementById('suggested-products');
+        const suggestedGrid = document.getElementById('suggested-grid');
         
         // متغيرات التطبيق
         let allProducts = [];
@@ -2042,13 +2248,85 @@
         let currentTab = 'customer-info';
         let userLocation = null;
         let locationWatchId = null;
-        
-        // مناطق عمان
-        const ammanAreas = [
-            "خلدا", "صويلح", "دابوق", "الشميساني", "جبل عمان", 
-            "الصويفية", "الزرقاء", "الرابية", "تلاع العلي", 
-            "مرج الحمام", "أخرى"
-        ];
+        let deliveryPrices = {
+            "صويلح": 2.00,
+            "دابوق": 2.00,
+            "خلدا": 2.00,
+            "تلاع العلي": 2.50,
+            "ام السماق": 2.50,
+            "الكمالية": 2.50,
+            "المدينة الطبية": 2.50,
+            "شارع الجامعة": 2.50,
+            "دوار الواحة": 2.50,
+            "حدائق الحسين": 2.50,
+            "ضاحية الرشيد": 3.00,
+            "ضاحية الروضة": 3.00,
+            "الجبيهة": 3.00,
+            "الجاردنز": 3.00,
+            "صافوط": 3.00,
+            "الرابية": 3.00,
+            "الدوار السابع": 3.00,
+            "الدوار الثامن": 3.00,
+            "البيادر": 3.00,
+            "الجندويل": 3.00,
+            "الكرسي": 3.00,
+            "الشميساني": 3.00,
+            "الامير راشد": 3.00,
+            "بدر الجديدة": 3.50,
+            "الدوار الرابع": 3.50,
+            "الدوار الخامس": 3.50,
+            "الدوار السادس": 3.50,
+            "حي المنصور": 3.50,
+            "الصويفية": 3.50,
+            "ام اذينة": 3.50,
+            "الفحيص": 4.00,
+            "ماحص": 4.00,
+            "الدوار الثالث": 4.00,
+            "وادي صقرة": 4.00,
+            "العبدلي": 4.00,
+            "عبدون": 4.00,
+            "دير غبار": 4.00,
+            "شفا بدران": 4.00,
+            "ابو نصير": 4.00,
+            "ضاحية النخيل": 4.00,
+            "الظهير": 4.00,
+            "عين الباشا": 4.00,
+            "عرجان": 4.00,
+            "المدينة الرياضية": 4.00,
+            "مرج الحمام": 5.00,
+            "الدوار الثاني": 5.00,
+            "الدوار الاول": 5.00,
+            "جبل الحسين": 5.00,
+            "ضاحية الاقصى": 5.00,
+            "ضاحية الياسمين": 5.00,
+            "الهاشمي الشمالي": 5.00,
+            "جبل النزهة": 5.00,
+            "ابوعليا": 5.00,
+            "طبربور": 5.00,
+            "ضاحية الاميرحسن": 5.00,
+            "جبل النصر": 6.00,
+            "عدن": 6.00,
+            "حي نزال": 6.00,
+            "جبل الأخضر": 6.00,
+            "المقابلين": 6.00,
+            "جبل الزهور": 6.00,
+            "البنيات": 6.00,
+            "عراق الأمير": 6.00,
+            "ضاحية الحاج حسن": 6.00,
+            "شارع الحرية": 6.00,
+            "المنارة": 6.00,
+            "ام النواره": 6.00,
+            "الوحدات": 6.00,
+            "أبو علندا": 7.00,
+            "جاوا": 7.00,
+            "الجويدة": 7.00,
+            "خريبة السوق": 7.00,
+            "ماركا الشمالية": 7.00,
+            "ماركا الجنوبية": 7.00,
+            "القويسمة": 7.00,
+            "جبل الشمالي": 9.00,
+            "الرصيفة": 9.00
+        };
         
         // مراحل حالة الطلب
         const orderStatuses = [
@@ -2090,35 +2368,50 @@
             }
         }
         
-        // تهيئة الخريطة
+        // تهيئة الخريطة باستخدام Google Maps
         function initMap() {
             // إحداثيات عمان الافتراضية
             const defaultLat = 31.9539;
             const defaultLng = 35.9106;
             
             // تهيئة الخريطة
-            map = L.map('location-map').setView([defaultLat, defaultLng], 13);
+            map = L.map('location-map', {
+                zoomControl: false,
+                preferCanvas: true // تحسين الأداء
+            }).setView([defaultLat, defaultLng], 13);
             
-            // إضافة طبقة الخريطة
+            // إضافة عناصر التحكم في التكبير/التصغير
+            L.control.zoom({
+                position: 'topright'
+            }).addTo(map);
+            
+            // إضافة طبقة الخريطة مع تحسين الأداء
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18,
+                minZoom: 10
             }).addTo(map);
             
             // إضافة علامة قابلة للسحب
-            marker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map);
+            marker = L.marker([defaultLat, defaultLng], {
+                draggable: true,
+                autoPan: true // تحريك الخريطة تلقائياً عند سحب العلامة
+            }).addTo(map);
             
             // تحديث الإحداثيات عند سحب العلامة
             marker.on('dragend', function(event) {
                 const position = marker.getLatLng();
                 customerLat.value = position.lat;
                 customerLng.value = position.lng;
+                map.panTo(position); // تحريك الخريطة إلى العلامة
             });
             
-            // تحديث الإحداثيات عند النقر на الخريطة
+            // تحديث الإحداثيات عند النقر على الخريطة
             map.on('click', function(e) {
                 marker.setLatLng(e.latlng);
                 customerLat.value = e.latlng.lat;
                 customerLng.value = e.latlng.lng;
+                map.panTo(e.latlng); // تحريك الخريطة إلى النقطة المحددة
             });
             
             // زر حفظ الموقع
@@ -2394,6 +2687,11 @@
             floatingCart.addEventListener('click', () => {
                 cartSidebar.classList.toggle('active');
                 document.body.classList.toggle('no-scroll');
+                
+                // عرض المنتجات المقترحة عند فتح السلة
+                if (cartSidebar.classList.contains('active')) {
+                    showSuggestedProducts();
+                }
             });
             
             cartClose.addEventListener('click', () => {
@@ -2498,6 +2796,13 @@
                     }
                 });
             });
+            
+            // تحديث سعر التوصيل عند تغيير المنطقة
+            customerArea.addEventListener('change', () => {
+                if (currentTab === 'order-review') {
+                    updateOrderSummary();
+                }
+            });
         }
         
         // التحقق من صحة بيانات التبويب الحالي
@@ -2517,9 +2822,8 @@
                 }
             } else if (tabId === 'delivery-info') {
                 const area = document.getElementById('customer-area').value;
-                const address = document.getElementById('customer-address').value;
                 
-                if (!area || !address) {
+                if (!area) {
                     showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
                     return false;
                 }
@@ -2556,6 +2860,11 @@
             
             // تحديث التبويب الحالي
             currentTab = tabId;
+            
+            // إذا كان التبويب النشط هو مراجعة الطلب، نقوم بتحديث الملخص
+            if (tabId === 'order-review') {
+                updateOrderSummary();
+            }
         }
         
         // تصفية المنتجات حسب المجموعة
@@ -2867,6 +3176,9 @@
                     </div>
                 `;
                 cartTotalPrice.textContent = '0.00';
+                
+                // إخفاء قسم المنتجات المقترحة إذا كانت السلة فارغة
+                suggestedProducts.style.display = 'none';
             } else {
                 cartItems.innerHTML = '';
                 let totalPrice = 0;
@@ -2923,7 +3235,46 @@
                 
                 // تحديث السعر الإجمالي
                 cartTotalPrice.textContent = totalPrice.toFixed(2);
+                
+                // إظهار قسم المنتجات المقترحة
+                suggestedProducts.style.display = 'block';
             }
+        }
+        
+        // عرض المنتجات المقترحة في السلة
+        function showSuggestedProducts() {
+            // مسح المحتوى الحالي
+            suggestedGrid.innerHTML = '';
+            
+            // إذا لم يكن هناك منتجات، لا نعرض أي شيء
+            if (allProducts.length === 0) return;
+            
+            // اختيار 4 منتجات عشوائية (أو أقل إذا لم يكن هناك منتجات كافية)
+            const randomProducts = [...allProducts]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 4);
+            
+            // إضافة المنتجات إلى القسم
+            randomProducts.forEach(product => {
+                const suggestedItem = document.createElement('div');
+                suggestedItem.className = 'suggested-item';
+                suggestedItem.innerHTML = `
+                    <div class="suggested-image">
+                        <img src="${product.images[0]}" alt="${product.name}">
+                    </div>
+                    <div class="suggested-details">
+                        <div class="suggested-name">${product.name}</div>
+                        <div class="suggested-price">${product.price.toFixed(2)} د.أ</div>
+                    </div>
+                `;
+                
+                // إضافة حدث النقر لإضافة المنتج إلى السلة
+                suggestedItem.addEventListener('click', () => {
+                    addToCart(product);
+                });
+                
+                suggestedGrid.appendChild(suggestedItem);
+            });
         }
         
         // تحديث ملخص الطلب
@@ -2946,21 +3297,46 @@
                 orderItems.appendChild(orderItemElement);
             });
             
+            // حساب سعر التوصيل والخصم
+            const selectedArea = customerArea.value;
+            let deliveryPrice = 0;
+            let discountAmount = 0;
+            
+            if (selectedArea && deliveryPrices[selectedArea]) {
+                deliveryPrice = deliveryPrices[selectedArea];
+                
+                // تطبيق الخصم حسب قيمة الطلب
+                if (totalPrice >= 15) {
+                    discountAmount = 3;
+                } else if (totalPrice >= 10) {
+                    discountAmount = 2;
+                }
+                
+                // التأكد من أن الخصم لا يتجاوز سعر التوصيل
+                if (discountAmount > deliveryPrice) {
+                    discountAmount = deliveryPrice;
+                }
+            }
+            
+            // حساب السعر النهائي
+            const finalPrice = totalPrice + deliveryPrice - discountAmount;
+            
+            // تحديث الأسعار في الواجهة
             orderTotalPrice.textContent = totalPrice.toFixed(2) + ' د.أ';
+            orderFinalPrice.textContent = finalPrice.toFixed(2) + ' د.أ';
         }
         
         // إرسال الطلب
         function submitOrder() {
             const customerName = document.getElementById('customer-name').value;
             const customerPhone = document.getElementById('customer-phone').value;
-            const customerArea = document.getElementById('customer-area').value;
-            const customerAddress = document.getElementById('customer-address').value;
+            const customerAreaValue = document.getElementById('customer-area').value;
             const customerNotes = document.getElementById('customer-notes').value;
             const customerLatValue = customerLat.value;
             const customerLngValue = customerLng.value;
 
             // التحقق من الحقول المطلوبة
-            if (!customerName || !customerPhone || !customerArea || !customerAddress) {
+            if (!customerName || !customerPhone || !customerAreaValue) {
                 showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
                 return;
             }
@@ -2968,6 +3344,26 @@
             // تعطيل زر الإرسال أثناء المعالجة
             submitOrderBtn.disabled = true;
             submitOrderBtn.textContent = 'جاري إرسال الطلب...';
+
+            // حساب سعر التوصيل والخصم
+            let deliveryPrice = deliveryPrices[customerAreaValue] || 0;
+            let discountAmount = 0;
+            const totalPrice = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            
+            // تطبيق الخصم حسب قيمة الطلب
+            if (totalPrice >= 15) {
+                discountAmount = 3;
+            } else if (totalPrice >= 10) {
+                discountAmount = 2;
+            }
+            
+            // التأكد من أن الخصم لا يتجاوز سعر التوصيل
+            if (discountAmount > deliveryPrice) {
+                discountAmount = deliveryPrice;
+            }
+            
+            // حساب السعر النهائي
+            const finalPrice = totalPrice + deliveryPrice - discountAmount;
 
             // إنشاء رقم طلب فريد
             generateUniqueOrderId().then(orderId => {
@@ -2980,14 +3376,16 @@
                     orderId: orderId,
                     customerName: customerName,
                     customerPhone: customerPhone,
-                    deliveryArea: customerArea,
-                    customerAddress: customerAddress,
+                    deliveryArea: customerAreaValue,
                     customerNotes: customerNotes,
                     customerLat: customerLatValue,
                     customerLng: customerLngValue,
                     mapLink: mapLink,
                     items: cart,
-                    total: cart.reduce((total, item) => total + (item.price * item.quantity), 0),
+                    total: totalPrice,
+                    deliveryPrice: deliveryPrice,
+                    discountAmount: discountAmount,
+                    finalPrice: finalPrice,
                     date: new Date().toISOString(),
                     status: 'received',
                     statusHistory: [
