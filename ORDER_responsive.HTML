@@ -7,6 +7,8 @@
     <link rel="icon" type="image/x-icon" href="https://i.postimg.cc/2Sr4NfTj/465798-png5757.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- إضافة Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {
             --primary: #9c0f33;
@@ -35,6 +37,7 @@
             color: var(--dark);
             min-height: 100vh;
             position: relative;
+            padding-bottom: 80px; /* مساحة للزر الثابت في الأسفل */
         }
         
         /* تصميم الهيدر المعدل */
@@ -136,6 +139,41 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
+        }
+        
+        /* زر إتمام الطلب الثابت */
+        .sticky-checkout-btn {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 98;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sticky-checkout-btn:hover {
+            background: linear-gradient(to right, var(--primary-dark), #5a001f);
+            transform: translateY(-2px);
+            box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sticky-checkout-btn:disabled {
+            background-color: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
         
         /* شريط التصنيفات الثابت */
@@ -550,132 +588,164 @@
             font-size: 1.1rem;
         }
         
-        /* قسم المنتجات المقترحة في السلة - تم التعديل */
+        /* قسم المنتجات المقترحة المحسنة - تصميم كاروسل */
         .suggested-products {
-            padding: 20px;
-            border-top: 1px solid var(--gray);
-            background-color: #fffaf3;
-        }
-        
-        .suggested-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--primary);
-            text-align: center;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .suggested-title::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            border-radius: 2px;
-        }
-        
-        .suggested-scroll-container {
-            overflow-x: auto;
-            padding: 10px 5px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-        }
-        
-        .suggested-scroll-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        
-        .suggested-scroll-container::-webkit-scrollbar-thumb {
-            background-color: var(--primary);
-            border-radius: 3px;
-        }
-        
-        .suggested-scroll-container::-webkit-scrollbar-track {
-            background-color: var(--light);
-            border-radius: 3px;
-        }
-        
-        .suggested-grid {
-            display: flex;
-            gap: 15px;
-            padding: 5px;
-        }
-        
-        .suggested-item {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-            transition: var(--transition);
-            cursor: pointer;
-            flex: 0 0 auto;
-            width: 150px;
-            position: relative;
-        }
-        
-        .suggested-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .suggested-image {
-            height: 100px;
-            width: 100%;
-            overflow: hidden;
-        }
-        
-        .suggested-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .suggested-details {
-            padding: 10px;
-        }
-        
-        .suggested-name {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            color: var(--dark);
-            text-align: center;
-            line-height: 1.3;
-        }
-        
-        .suggested-price {
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 0.9rem;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-        
-        .suggested-add-btn {
-            background: linear-gradient(to right, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: var(--transition);
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-        }
-        
-        .suggested-add-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(156, 15, 51, 0.3);
-        }
+    padding: 12px; /* أصغر من 20px */
+    border-top: 1px solid var(--gray);
+    background-color: #fff; /* أخف من #fffaf3 */
+    border-radius: 8px;
+}
+
+.suggested-title {
+    font-size: 1rem; /* أصغر */
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--dark); /* أبسط من primary */
+    text-align: center;
+    position: relative;
+    padding-bottom: 6px;
+}
+
+.suggested-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px; /* أصغر من 60px */
+    height: 2px; /* أنحف */
+    background: var(--primary);
+    border-radius: 1px;
+}
+
+.suggested-carousel {
+    position: relative;
+    overflow: hidden;
+}
+
+.suggested-carousel-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 6px 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.suggested-carousel-container::-webkit-scrollbar {
+    display: none;
+}
+
+.suggested-item {
+    background: #fafafa; /* أفتح وأخف */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: var(--transition);
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 120px; /* أصغر من 145px */
+    margin: 0 6px;
+    position: relative;
+}
+
+.suggested-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.suggested-image {
+    height: 80px; /* أصغر من 120px */
+    width: 100%;
+    overflow: hidden;
+}
+
+.suggested-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.suggested-details {
+    padding: 8px;
+}
+
+.suggested-name {
+    font-weight: 500;
+    font-size: 0.8rem; /* أصغر */
+    margin-bottom: 3px;
+    color: var(--dark);
+    text-align: center;
+    line-height: 1.2;
+    height: auto; /* إلغاء التحديد الصارم */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.suggested-rating {
+    color: #ffc107;
+    font-size: 0.7rem;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.suggested-price {
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.suggested-add-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 28px; /* أصغر */
+    height: 28px;
+    font-size: 0.8rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.suggested-add-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 2px 6px rgba(156, 15, 51, 0.3);
+}
+
+.carousel-nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;
+}
+
+.carousel-nav-btn {
+    background-color: var(--light);
+    border: none;
+    width: 24px; /* أصغر */
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.8rem;
+}
+
+.carousel-nav-btn:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
         
         /* نافذة تفاصيل المنتج المحسنة */
         .product-modal {
@@ -1023,56 +1093,79 @@
             border-bottom: 2px solid var(--gray);
         }
         
-        /* تصميم التبويبات */
-        .checkout-tabs {
+        /* تصميم التبويبات مع مؤشر التقدم */
+        .checkout-progress {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             position: relative;
+            counter-reset: step;
         }
         
-        .checkout-tab {
-            flex: 1;
-            text-align: center;
-            padding: 12px;
-            cursor: pointer;
+        .checkout-progress::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 4px;
             background-color: var(--light);
-            border-radius: 8px;
-            margin: 0 5px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
         
-        .checkout-tab.active {
+        .checkout-progress-bar {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            z-index: 2;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-step {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            width: 33.33%;
+        }
+        
+        .progress-step-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: var(--light);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-weight: bold;
+            transition: var(--transition);
+        }
+        
+        .progress-step.active .progress-step-icon {
             background-color: var(--primary);
             color: white;
-            box-shadow: 0 4px 10px rgba(156, 15, 51, 0.25);
+            box-shadow: 0 0 0 4px rgba(156, 15, 51, 0.2);
         }
         
-        .checkout-tab.completed {
+        .progress-step.completed .progress-step-icon {
             background-color: var(--success);
             color: white;
         }
         
-        .checkout-tab-number {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            background-color: white;
-            color: var(--primary);
-            border-radius: 50%;
-            margin-left: 8px;
-            font-weight: bold;
+        .progress-step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark);
         }
         
-        .checkout-tab.active .checkout-tab-number {
-            background-color: white;
+        .progress-step.active .progress-step-label {
             color: var(--primary);
         }
         
-        .checkout-tab.completed .checkout-tab-number {
-            background-color: white;
+        .progress-step.completed .progress-step-label {
             color: var(--success);
         }
         
@@ -1099,6 +1192,7 @@
         
         .form-group {
             margin-bottom: 15px;
+            position: relative;
         }
         
         .form-group label {
@@ -1133,6 +1227,13 @@
         .form-group textarea {
             min-height: 100px;
             resize: vertical;
+        }
+        
+        .form-hint {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            margin-top: 5px;
+            display: block;
         }
         
         /* أزرار التنقل بين التبويبات */
@@ -1174,7 +1275,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         
-        /* خريطة تحديد الموقع - محسنة باستخدام Google Maps */
+        /* خريطة Leaflet - بديل Google Maps */
         .map-container {
             height: 250px;
             border-radius: 10px;
@@ -1187,6 +1288,7 @@
         #location-map {
             height: 100%;
             width: 100%;
+            z-index: 1;
         }
         
         .map-actions {
@@ -1334,6 +1436,10 @@
             margin-top: 15px;
             font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(156, 15, 51, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
         
         .submit-order-btn:hover {
@@ -1784,6 +1890,11 @@
             .form-group {
                 flex: 1;
             }
+            
+            .sticky-checkout-btn {
+                padding: 18px;
+                font-size: 1.2rem;
+            }
         }
         
         @media (max-width: 767px) {
@@ -1801,7 +1912,7 @@
             }
             
             .floating-cart {
-                bottom: 20px;
+                bottom: 80px; /* تعديل الموقع بسبب الزر الثابت الجديد */
                 left: 50%;
                 transform: translateX(-50%);
                 width: auto;
@@ -1876,9 +1987,29 @@
             }
             
             .suggested-item {
-                width: 130px;
+                width: 160px;
+            }
+            
+            .sticky-checkout-btn {
+                padding: 16px;
+                font-size: 1rem;
+            }
+            
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 14px; /* زيادة الحشوة لسهولة النقر على الجوال */
+            }
+            
+            .tab-btn {
+                padding: 14px 20px; /* زيادة حجم الأزرار على الجوال */
             }
         }
+        /* إخفاء زر إتمام الطلب من الرئيسية */
+#sticky-checkout-btn {
+    display: none !important;
+}
+
     </style>
 </head>
 <body>
@@ -1913,6 +2044,12 @@
         <i class="fas fa-shopping-cart"></i>
     </div>
     
+    <!-- زر إتمام الطلب الثابت -->
+    <button class="sticky-checkout-btn" id="sticky-checkout-btn" style="display: none;">
+        <i class="fas fa-shopping-bag"></i>
+        إتمام الطلب (<span id="sticky-cart-total">0.00</span> د.أ)
+    </button>
+    
     <!-- منطقة عرض المنتجات -->
     <div class="products-container">
         <h2 class="section-title">منتجاتنا الشهية</h2>
@@ -1943,9 +2080,17 @@
             <!-- قسم المنتجات المقترحة - تم التعديل -->
             <div class="suggested-products" id="suggested-products">
                 <h3 class="suggested-title">منتجات قد تعجبك</h3>
-                <div class="suggested-scroll-container">
-                    <div class="suggested-grid" id="suggested-grid">
+                <div class="suggested-carousel">
+                    <div class="suggested-carousel-container" id="suggested-carousel">
                         <!-- سيتم ملء هذا القسم بالمنتجات المقترحة -->
+                    </div>
+                    <div class="carousel-nav">
+                        <button class="carousel-nav-btn" id="carousel-prev">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <button class="carousel-nav-btn" id="carousel-next">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1978,20 +2123,21 @@
             </button>
             <h2 class="checkout-title">إتمام الطلب</h2>
             
-            <!-- تبويبات الخطوات -->
-            <div class="checkout-tabs" id="checkout-tabs">
-                <div class="checkout-tab active" data-tab="customer-info">
-                    <span class="checkout-tab-number">1</span>
-                    المعلومات
+            <!-- مؤشر التقدم -->
+            <div class="checkout-progress" id="checkout-progress">
+                <div class="progress-step active" data-step="customer-info">
+                    <div class="progress-step-icon">1</div>
+                    <div class="progress-step-label">المعلومات</div>
                 </div>
-                <div class="checkout-tab" data-tab="delivery-info">
-                    <span class="checkout-tab-number">2</span>
-                    العنوان
+                <div class="progress-step" data-step="delivery-info">
+                    <div class="progress-step-icon">2</div>
+                    <div class="progress-step-label">العنوان</div>
                 </div>
-                <div class="checkout-tab" data-tab="order-review">
-                    <span class="checkout-tab-number">3</span>
-                    المراجعة
+                <div class="progress-step" data-step="order-review">
+                    <div class="progress-step-icon">3</div>
+                    <div class="progress-step-label">المراجعة</div>
                 </div>
+                <div class="checkout-progress-bar" id="progress-bar"></div>
             </div>
             
             <form id="checkout-form">
@@ -2004,6 +2150,7 @@
                     <div class="form-group">
                         <label for="customer-phone">رقم الهاتف *</label>
                         <input type="tel" id="customer-phone" required>
+                        <span class="form-hint">سيستخدم هذا الرقم للتواصل بخصوص طلبك</span>
                     </div>
                     
                     <div class="tab-navigation">
@@ -2097,6 +2244,7 @@
                             <option value="جبل الشمالي">جبل الشمالي</option>
                             <option value="الرصيفة">الرصيفة</option>
                         </select>
+                        <span class="form-hint">اختر منطقتك لحساب سعر التوصيل</span>
                     </div>
                     
                     <div class="form-group">
@@ -2113,6 +2261,7 @@
                         </div>
                         <input type="hidden" id="customer-lat">
                         <input type="hidden" id="customer-lng">
+                        <span class="form-hint">اضغط على الخريطة لتحديد موقعك بدقة</span>
                     </div>
                     
                     <div class="form-group">
@@ -2151,7 +2300,9 @@
                         <button type="button" class="tab-btn prev" data-prev="delivery-info">
                             <i class="fas fa-arrow-right"></i> السابق
                         </button>
-                        <button type="submit" class="submit-order-btn" id="submit-order-btn">تأكيد الطلب</button>
+                        <button type="submit" class="submit-order-btn" id="submit-order-btn">
+                            <i class="fas fa-check-circle"></i> تأكيد الطلب
+                        </button>
                     </div>
                 </div>
             </form>
@@ -2215,8 +2366,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     
-    <!-- إضافة خرائط Google -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDpEmhS2X474vMWRfL5U2WwqJjK-7W5YyY&libraries=places&callback=Function.prototype" async defer></script>
+    <!-- إضافة Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
         // تهيئة Firebase
@@ -2274,12 +2425,16 @@
         const statusOrderNumber = document.getElementById('status-order-number');
         const statusDate = document.getElementById('status-date');
         const statusTimeline = document.getElementById('status-timeline');
-        const checkoutTabs = document.getElementById('checkout-tabs');
-        const tabContents = document.querySelectorAll('.tab-content');
-        const locateMeBtn = document.getElementById('locate-me-btn');
         const customerArea = document.getElementById('customer-area');
         const suggestedProducts = document.getElementById('suggested-products');
-        const suggestedGrid = document.getElementById('suggested-grid');
+        const suggestedCarousel = document.getElementById('suggested-carousel');
+        const carouselPrev = document.getElementById('carousel-prev');
+        const carouselNext = document.getElementById('carousel-next');
+        const checkoutProgress = document.getElementById('checkout-progress');
+        const progressBar = document.getElementById('progress-bar');
+        const stickyCheckoutBtn = document.getElementById('sticky-checkout-btn');
+        const stickyCartTotal = document.getElementById('sticky-cart-total');
+        const locateMeBtn = document.getElementById('locate-me-btn');
         
         // متغيرات التطبيق
         let allProducts = [];
@@ -2345,7 +2500,7 @@
             "جبل الحسين": 5.00,
             "ضاحية الاقصى": 5.00,
             "ضاحية الياسمين": 5.00,
-            "الهاشمي الشمالي": 5.00,
+            "الهاشmi الشمالي": 5.00,
             "جبل النزهة": 5.00,
             "ابوعليا": 5.00,
             "طبربور": 5.00,
@@ -2414,86 +2569,37 @@
             }
         }
         
-        // تهيئة الخريطة باستخدام Google Maps
+        // تهيئة الخريطة باستخدام Leaflet
         function initMap() {
             // إحداثيات عمان الافتراضية
             const defaultLat = 31.9539;
             const defaultLng = 35.9106;
             
             // تهيئة الخريطة
-            map = new google.maps.Map(document.getElementById('location-map'), {
-                center: { lat: defaultLat, lng: defaultLng },
-                zoom: 13,
-                mapTypeId: google.maps.MapTypeId.ROADMAP,
-                streetViewControl: false,
-                mapTypeControl: false,
-                fullscreenControl: false,
-                styles: [
-                    {
-                        "featureType": "administrative",
-                        "elementType": "labels.text.fill",
-                        "stylers": [{"color": "#444444"}]
-                    },
-                    {
-                        "featureType": "landscape",
-                        "elementType": "all",
-                        "stylers": [{"color": "#f2f2f2"}]
-                    },
-                    {
-                        "featureType": "poi",
-                        "elementType": "all",
-                        "stylers": [{"visibility": "off"}]
-                    },
-                    {
-                        "featureType": "road",
-                        "elementType": "all",
-                        "stylers": [{"saturation": -100}, {"lightness": 45}]
-                    },
-                    {
-                        "featureType": "road.highway",
-                        "elementType": "all",
-                        "stylers": [{"visibility": "simplified"}]
-                    },
-                    {
-                        "featureType": "road.arterial",
-                        "elementType": "labels.icon",
-                        "stylers": [{"visibility": "off"}]
-                    },
-                    {
-                        "featureType": "transit",
-                        "elementType": "all",
-                        "stylers": [{"visibility": "off"}]
-                    },
-                    {
-                        "featureType": "water",
-                        "elementType": "all",
-                        "stylers": [{"color": "#9c0f33"}, {"visibility": "on"}]
-                    }
-                ]
-            });
+            map = L.map('location-map').setView([defaultLat, defaultLng], 13);
+            
+            // إضافة طبقة OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
             
             // إضافة علامة قابلة للسحب
-            marker = new google.maps.Marker({
-                position: { lat: defaultLat, lng: defaultLng },
-                map: map,
-                draggable: true,
-                title: 'موقع التوصيل'
-            });
+            marker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map);
             
             // تحديث الإحداثيات عند سحب العلامة
-            marker.addListener('dragend', function() {
-                const position = marker.getPosition();
-                customerLat.value = position.lat();
-                customerLng.value = position.lng();
+            marker.on('dragend', function(event) {
+                const position = marker.getLatLng();
+                customerLat.value = position.lat;
+                customerLng.value = position.lng;
                 map.panTo(position); // تحريك الخريطة إلى العلامة
             });
             
             // تحديث الإحداثيات عند النقر على الخريطة
-            map.addListener('click', function(e) {
-                marker.setPosition(e.latLng);
-                customerLat.value = e.latLng.lat();
-                customerLng.value = e.latLng.lng();
-                map.panTo(e.latLng); // تحريك الخريطة إلى النقطة المحددة
+            map.on('click', function(e) {
+                marker.setLatLng(e.latlng);
+                customerLat.value = e.latlng.lat;
+                customerLng.value = e.latlng.lng;
+                map.panTo(e.latlng); // تحريك الخريطة إلى النقطة المحددة
             });
             
             // زر حفظ الموقع
@@ -2507,9 +2613,9 @@
             
             // زر إعادة تعيين
             resetLocationBtn.addEventListener('click', function() {
-                const defaultPosition = new google.maps.LatLng(defaultLat, defaultLng);
-                marker.setPosition(defaultPosition);
-                map.setCenter(defaultPosition);
+                const defaultPosition = L.latLng(defaultLat, defaultLng);
+                marker.setLatLng(defaultPosition);
+                map.setView(defaultPosition, 13);
                 customerLat.value = '';
                 customerLng.value = '';
                 showToast('تم إعادة تعيين الموقع', 'info');
@@ -2544,10 +2650,9 @@
                     userLocation = { lat, lng };
                     
                     // تحديث الخريطة والعنوان
-                    const newPosition = new google.maps.LatLng(lat, lng);
-                    marker.setPosition(newPosition);
-                    map.setCenter(newPosition);
-                    map.setZoom(16);
+                    const newPosition = L.latLng(lat, lng);
+                    marker.setLatLng(newPosition);
+                    map.setView(newPosition, 16);
                     customerLat.value = lat;
                     customerLng.value = lng;
                     
@@ -2802,6 +2907,24 @@
                 document.body.classList.add('no-scroll');
             });
             
+            // الزر الثابت لإتمام الطلب
+            stickyCheckoutBtn.addEventListener('click', () => {
+                if (cart.length === 0) {
+                    showToast('سلة التسوق فارغة', 'error');
+                    return;
+                }
+                
+                // إعادة تعيين التبويبات إلى الأول
+                switchTab('customer-info');
+                
+                // تحديث ملخص الطلب
+                updateOrderSummary();
+                
+                // فتح نافذة إتمام الطلب
+                checkoutModal.classList.add('active');
+                document.body.classList.add('no-scroll');
+            });
+            
             // إغلاق نافذة إتمام الطلب
             checkoutClose.addEventListener('click', () => {
                 checkoutModal.classList.remove('active');
@@ -2872,10 +2995,10 @@
                 });
             });
             
-            // النقر المباشر على التبويبات
-            document.querySelectorAll('.checkout-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabId = tab.getAttribute('data-tab');
+            // النقر على مؤشر التقدم
+            document.querySelectorAll('.progress-step').forEach(step => {
+                step.addEventListener('click', () => {
+                    const tabId = step.getAttribute('data-step');
                     if (validateTab(currentTab)) {
                         switchTab(tabId);
                     }
@@ -2887,6 +3010,15 @@
                 if (currentTab === 'order-review') {
                     updateOrderSummary();
                 }
+            });
+            
+            // التنقل في كاروسل المنتجات المقترحة
+            carouselPrev.addEventListener('click', () => {
+                suggestedCarousel.scrollBy({ left: -200, behavior: 'smooth' });
+            });
+            
+            carouselNext.addEventListener('click', () => {
+                suggestedCarousel.scrollBy({ left: 200, behavior: 'smooth' });
             });
         }
         
@@ -2920,28 +3052,15 @@
         // تغيير التبويب النشط
         function switchTab(tabId) {
             // إخفاء جميع المحتويات
-            tabContents.forEach(content => {
+            document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             
-            // إخفاء جميع التبويبات
-            document.querySelectorAll('.checkout-tab').forEach(tab => {
-                tab.classList.remove('active', 'completed');
-            });
+            // تحديث مؤشر التقدم
+            updateProgressBar(tabId);
             
             // إظهار المحتوى المحدد
             document.getElementById(`${tabId}-tab`).classList.add('active');
-            
-            // تحديث التبويب النشط
-            document.querySelector(`.checkout-tab[data-tab="${tabId}"]`).classList.add('active');
-            
-            // وضع علامة على التبويبات السابقة كمكتملة
-            const tabOrder = ['customer-info', 'delivery-info', 'order-review'];
-            const currentIndex = tabOrder.indexOf(tabId);
-            
-            for (let i = 0; i < currentIndex; i++) {
-                document.querySelector(`.checkout-tab[data-tab="${tabOrder[i]}"]`).classList.add('completed');
-            }
             
             // تحديث التبويب الحالي
             currentTab = tabId;
@@ -2950,6 +3069,32 @@
             if (tabId === 'order-review') {
                 updateOrderSummary();
             }
+        }
+        
+        // تحديث شريط التقدم
+        function updateProgressBar(currentTab) {
+            const steps = document.querySelectorAll('.progress-step');
+            let progressWidth = '0%';
+            
+            steps.forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            if (currentTab === 'customer-info') {
+                progressWidth = '0%';
+                steps[0].classList.add('active');
+            } else if (currentTab === 'delivery-info') {
+                progressWidth = '50%';
+                steps[0].classList.add('completed');
+                steps[1].classList.add('active');
+            } else if (currentTab === 'order-review') {
+                progressWidth = '100%';
+                steps[0].classList.add('completed');
+                steps[1].classList.add('completed');
+                steps[2].classList.add('active');
+            }
+            
+            progressBar.style.width = progressWidth;
         }
         
         // تصفية المنتجات حسب المجموعة
@@ -3264,6 +3409,9 @@
                 
                 // إخفاء قسم المنتجات المقترحة إذا كانت السلة فارغة
                 suggestedProducts.style.display = 'none';
+                
+                // إخفاء الزر الثابت
+                stickyCheckoutBtn.style.display = 'none';
             } else {
                 cartItems.innerHTML = '';
                 let totalPrice = 0;
@@ -3320,16 +3468,20 @@
                 
                 // تحديث السعر الإجمالي
                 cartTotalPrice.textContent = totalPrice.toFixed(2);
+                stickyCartTotal.textContent = totalPrice.toFixed(2);
                 
                 // إظهار قسم المنتجات المقترحة
                 suggestedProducts.style.display = 'block';
+                
+                // إظهار الزر الثابت
+                stickyCheckoutBtn.style.display = 'flex';
             }
         }
         
         // عرض المنتجات المقترحة في السلة
         function showSuggestedProducts() {
             // مسح المحتوى الحالي
-            suggestedGrid.innerHTML = '';
+            suggestedCarousel.innerHTML = '';
             
             // إذا لم يكن هناك منتجات، لا نعرض أي شيء
             if (allProducts.length === 0) return;
@@ -3349,9 +3501,14 @@
                     </div>
                     <div class="suggested-details">
                         <div class="suggested-name">${product.name}</div>
+                        ${product.rating ? `
+                        <div class="suggested-rating">
+                            ${getRatingStars(product.rating)}
+                        </div>
+                        ` : ''}
                         <div class="suggested-price">${product.price.toFixed(2)} د.أ</div>
                         <button class="suggested-add-btn" data-id="${product.id}">
-                            <i class="fas fa-cart-plus"></i> إضافة
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
                 `;
@@ -3368,7 +3525,7 @@
                     showProductDetails(product);
                 });
                 
-                suggestedGrid.appendChild(suggestedItem);
+                suggestedCarousel.appendChild(suggestedItem);
             });
         }
         
@@ -3464,7 +3621,7 @@
             generateUniqueOrderId().then(orderId => {
                 // إنشاء رابط الموقع
                 const mapLink = customerLatValue && customerLngValue ? 
-                    `https://www.google.com/maps?q=${customerLatValue},${customerLngValue}` : '';
+                    `https://www.openstreetmap.org/?mlat=${customerLatValue}&mlon=${customerLngValue}#map=16/${customerLatValue}/${customerLngValue}` : '';
 
                 // تجهيز بيانات الطلب
                 const orderData = {
